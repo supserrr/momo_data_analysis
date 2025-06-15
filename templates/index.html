@@ -1,0 +1,432 @@
+{% extends "base.html" %}
+
+{% block title %}Upload - MoMo Data Analysis{% endblock %}
+{% block subtitle %}Upload your SMS XML file or detect existing files{% endblock %}
+
+{% block content %}
+<div class="error hidden" id="error-message">
+    <span>Error:</span> <span id="error-text">Please try again.</span>
+</div>
+
+<!-- File Detection Section -->
+<div class="detection-container slide-up" id="detection-container">
+    <div class="detection-area">
+        <i class="fas fa-search detection-icon"></i>
+        <h3>Detect Existing Files</h3>
+        <p>Check for XML files in your data directory</p>
+        <button id="detect-btn" class="primary-btn">
+            <i class="fas fa-search"></i> Scan for Files
+        </button>
+    </div>
+    
+    <div id="detected-files" class="detected-files-container hidden">
+        <h4>Found XML Files:</h4>
+        <div id="files-list" class="files-list"></div>
+    </div>
+</div>
+
+<!-- OR Divider -->
+<div class="divider">
+    <span>OR</span>
+</div>
+
+<!-- Upload Section -->
+<div class="upload-container slide-up">
+    <div id="drop-area" class="drop-area">
+        <i class="fas fa-file-code drop-area-icon"></i>
+        <p>Drag & drop your XML file here</p>
+        <p>or</p>
+        <label for="file-input" class="upload-btn">Choose File</label>
+        <input type="file" id="file-input" accept=".xml" hidden>
+        <p class="file-info" id="file-info">No file selected</p>
+    </div>
+    
+    <div id="preview-container" class="preview-container hidden fade-in">
+        <h3>File Details</h3>
+        <div class="file-details">
+            <div class="detail-row">
+                <span class="detail-label"><i class="fas fa-file"></i> Filename:</span>
+                <span class="detail-value" id="filename-preview"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label"><i class="fas fa-weight"></i> Size:</span>
+                <span class="detail-value" id="filesize-preview"></span>
+            </div>
+        </div>
+        <div class="preview-actions">
+            <button id="change-file-btn" class="secondary-btn">
+                <i class="fas fa-undo-alt"></i> Change File
+            </button>
+            <button id="upload-btn" class="primary-btn">
+                <i class="fas fa-upload"></i> Process File
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="loading-container hidden fade-in" id="loading-container">
+    <div class="spinner"></div>
+    <p>Processing your XML file...</p>
+    <p class="loading-status" id="loading-status">Parsing SMS messages</p>
+</div>
+
+<div class="info-section">
+    <h3>How it works</h3>
+    <div class="info-grid">
+        <div class="info-card">
+            <i class="fas fa-search info-icon"></i>
+            <h4>Auto-Detect</h4>
+            <p>Automatically find XML files in your data folder</p>
+        </div>
+        <div class="info-card">
+            <i class="fas fa-upload info-icon"></i>
+            <h4>Upload XML</h4>
+            <p>Upload your MoMo SMS backup XML file</p>
+        </div>
+        <div class="info-card">
+            <i class="fas fa-cogs info-icon"></i>
+            <h4>Process Data</h4>
+            <p>We parse and categorize your transactions</p>
+        </div>
+        <div class="info-card">
+            <i class="fas fa-chart-pie info-icon"></i>
+            <h4>View Analytics</h4>
+            <p>Get insights with beautiful visualizations</p>
+        </div>
+    </div>
+</div>
+
+<style>
+.detection-container {
+    max-width: 600px;
+    margin: 0 auto 2rem;
+    width: 100%;
+}
+
+.detection-area {
+    border: 2px solid var(--accent, #d9c7a7);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    background-color: var(--bg-secondary, #e6dcc5);
+    transition: all 0.3s ease;
+}
+
+.detection-area:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.detection-icon {
+    font-size: 2.5rem;
+    color: var(--accent, #d9c7a7);
+    margin-bottom: 1rem;
+}
+
+.detected-files-container {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+}
+
+.detected-files-container h4 {
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.files-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.divider {
+    text-align: center;
+    margin: 2rem 0;
+    position: relative;
+}
+
+.divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: var(--border, #d9c7a7);
+}
+
+.divider span {
+    background-color: var(--bg-primary, #f5f2e8);
+    padding: 0 1rem;
+    color: var(--text-secondary, #3a3a3a);
+    font-weight: 600;
+}
+
+.upload-container {
+    max-width: 600px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.drop-area {
+    border: 2px dashed var(--accent, #d9c7a7);
+    border-radius: 12px;
+    padding: 2.5rem;
+    text-align: center;
+    background-color: var(--bg-secondary, #e6dcc5);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.drop-area:hover,
+.drop-area.active {
+    border-color: var(--accent, #d9c7a7);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.drop-area-icon {
+    font-size: 3rem;
+    color: var(--accent, #d9c7a7);
+    margin-bottom: 1rem;
+}
+
+.upload-btn {
+    display: inline-block;
+    background-color: var(--button-primary, #121212);
+    color: var(--bg-primary, #f5f2e8);
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.upload-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background-color: var(--accent, #d9c7a7);
+    color: var(--button-primary, #121212);
+}
+
+.file-info {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary, #3a3a3a);
+}
+
+.preview-container {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px var(--shadow);
+    border: 1px solid var(--border);
+}
+
+.file-details {
+    margin: 1rem 0;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem 0;
+}
+
+.detail-label {
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.detail-value {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.preview-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.primary-btn, .secondary-btn {
+    border: none;
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    font-size: 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    gap: 0.5rem;
+}
+
+.primary-btn {
+    background-color: var(--button-primary, #121212);
+    color: var(--bg-primary, #f5f2e8);
+}
+
+.primary-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background-color: var(--accent, #d9c7a7);
+    color: var(--button-primary, #121212);
+}
+
+.primary-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.secondary-btn {
+    background-color: var(--button-secondary, #d9c7a7);
+    color: var(--text-primary, #121212);
+}
+
+.secondary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.loading-container {
+    text-align: center;
+    margin-top: 1.5rem;
+    padding: 2rem;
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px var(--shadow);
+    border: 1px solid var(--border);
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid var(--bg-secondary);
+    border-top: 5px solid var(--accent);
+    border-radius: 50%;
+    margin: 0 auto 1rem;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-status {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+}
+
+.hidden {
+    display: none;
+}
+
+.slide-up {
+    animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn 0.4s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.info-section {
+    margin-top: 3rem;
+    text-align: center;
+}
+
+.info-section h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.info-card {
+    background-color: var(--card-bg, #fcf9f2);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    border: 1px solid var(--border, #d9c7a7);
+}
+
+.info-card:hover {
+    transform: translateY(-5px);
+}
+
+.info-icon {
+    font-size: 2.5rem;
+    color: var(--accent, #d9c7a7);
+    margin-bottom: 1rem;
+}
+
+.info-card h4 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.info-card p {
+    color: var(--text-secondary, #3a3a3a);
+    font-size: 0.9rem;
+}
+
+.error {
+    background-color: #c25450;
+    color: white;
+    padding: 0.75rem;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+    .preview-actions {
+        flex-direction: column;
+    }
+    
+    .detection-area {
+        padding: 1.5rem;
+    }
+    
+    .drop-area {
+        padding: 1.5rem;
+    }
+    
+    .drop-area-icon, .detection-icon {
+        font-size: 2rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}

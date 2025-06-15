@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MoMo Data Analysis{% endblock %}</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="/" class="logo-container">
+                <svg class="logo" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="40" height="40" rx="8" fill="#D9C7A7"/>
+                    <path d="M12 20C12 24.4183 15.5817 28 20 28C24.4183 28 28 24.4183 28 20C28 15.5817 24.4183 12 20 12C15.5817 12 12 15.5817 12 20Z" fill="#121212"/>
+                    <path d="M20 8L22 14H28L23 18L25 24L20 20L15 24L17 18L12 14H18L20 8Z" fill="#121212"/>
+                </svg>
+                <h1>MoMo Analytics</h1>
+            </a>
+            <p>{% block subtitle %}Mobile Money Transaction Analysis{% endblock %}</p>
+            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark/light mode">
+                <i id="theme-icon" class="fas fa-moon"></i>
+            </button>
+        </header>
+        
+        <main>
+            {% block content %}{% endblock %}
+        </main>
+        
+        <footer>
+            <p>© 2025 MoMo Analytics - Data-Driven Insights</p>
+        </footer>
+    </div>
+    
+    <!-- Theme Script -->
+    <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+    
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>
