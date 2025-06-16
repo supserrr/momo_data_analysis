@@ -1,0 +1,48 @@
+{
+  "total_transactions": 1691,
+  "total_amount": 32947396.0,
+  "total_fees": 12820.0,
+  "categories": {
+    "incoming_money": {
+      "count": 63,
+      "amount": 5366753.0,
+      "fees": 0.0
+    },
+    "payment_to_code": {
+      "count": 670,
+      "amount": 5194492.0,
+      "fees": 300.0
+    },
+    "bank_deposit": {
+      "count": 248,
+      "amount": 11012800.0,
+      "fees": 0.0
+    },
+    "transfer_to_number": {
+      "count": 585,
+      "amount": 9731151.0,
+      "fees": 0.0
+    },
+    "airtime_payment": {
+      "count": 15,
+      "amount": 36200.0,
+      "fees": 0.0
+    },
+    "fees_and_charges": {
+      "count": 36,
+      "amount": 308000.0,
+      "fees": 0.0
+    },
+    "balance_inquiry": {
+      "count": 9,
+      "amount": 294000.0,
+      "fees": 0.0
+    },
+    "other": {
+      "count": 65,
+      "amount": 1004000.0,
+      "fees": 12520.0
+    }
+  },
+  "last_updated": "2025-06-16T15:05:25.846238"
+}
